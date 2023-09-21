@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     // 获取当前显示器列表
     DISPLAY_DEVICEA displayDevice;
     displayDevice.cb = sizeof(DISPLAY_DEVICEA);
-    for (DWORD i = 0; EnumDisplayDevicesA(NULL, i, &displayDevice, 0); i++)
+    for (DWORD i = 0; EnumDisplayDevicesA(nullptr, i, &displayDevice, 0); i++)
     {
       std::cout << "Device Name: " << displayDevice.DeviceName << std::endl;
       std::cout << "Device String: " << displayDevice.DeviceString << std::endl;
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   }
 
   // get display device name
-  const char *displayDeviceName = "\\\\.\\DISPLAY2";
+  const char *displayDeviceName = R"(\\.\DISPLAY2)";
 
   // get current display settings
   DEVMODE devMode;
@@ -48,16 +48,19 @@ int main(int argc, char *argv[])
   }
   devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT; // set fields
 
-  LONG result = ChangeDisplaySettingsEx(displayDeviceName, &devMode, NULL, CDS_UPDATEREGISTRY | CDS_RESET, NULL);
+  LONG result = ChangeDisplaySettingsEx(displayDeviceName, &devMode, nullptr, CDS_UPDATEREGISTRY | CDS_RESET, nullptr);
   if (result == DISP_CHANGE_SUCCESSFUL)
   {
     // change success
     std::cout << "Change success" << std::endl;
-    return 0;
   } else
   {
     // change failed
     std::cout << "Change failed" << std::endl;
-    return 1;
   }
+
+  // 等待用户输入
+  std::cout << "Press any key to continue..." << std::endl;
+  std::cin.get();
+  return 0;
 }
